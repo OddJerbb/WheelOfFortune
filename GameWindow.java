@@ -1,4 +1,4 @@
-package zetaomicron;
+package wheeloffortune;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -226,7 +226,7 @@ public class GameWindow {
     }
     
     public void setWheelImage() {
-        wheelImageF = new File("zetaomicron/Images/wheel.png");
+        wheelImageF = new File("wheeloffortune/Images/wheel.png");
         wheelLabel = new JLabel();
         wheelLabel.setSize(425, 425);
 

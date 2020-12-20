@@ -1,4 +1,4 @@
-package zetaomicron;
+package wheeloffortune;
 
 public class Player {
     private int playerNum;

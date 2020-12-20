@@ -1,4 +1,4 @@
-package zetaomicron;
+package wheeloffortune;
 
 import java.io.*;
 import java.util.*;
@@ -44,19 +44,19 @@ public class Round {
     public void choosePuzzle() throws IOException {
         switch (rand.nextInt(5)) {
             case 0:
-                puzzleF = new File("zetaomicron/Puzzles/Around the House.txt");
+                puzzleF = new File("wheeloffortune/Puzzles/Around the House.txt");
                 break;
             case 1:
-                puzzleF = new File("zetaomicron/Puzzles/Before and After.txt");
+                puzzleF = new File("wheeloffortune/Puzzles/Before and After.txt");
                 break;
             case 2:
-                puzzleF = new File("zetaomicron/Puzzles/Characters.txt");
+                puzzleF = new File("wheeloffortune/Puzzles/Characters.txt");
                 break;
             case 3:
-                puzzleF = new File("zetaomicron/Puzzles/Food and Drink.txt");
+                puzzleF = new File("wheeloffortune/Puzzles/Food and Drink.txt");
                 break;
             case 4:
-                puzzleF = new File("zetaomicron/Puzzles/Phrase.txt");
+                puzzleF = new File("wheeloffortune/Puzzles/Phrase.txt");
                 break;
             default:
                 break;

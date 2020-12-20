@@ -1,4 +1,4 @@
-package zetaomicron;
+package wheeloffortune;
 
 import java.awt.*;
 import java.awt.event.*;

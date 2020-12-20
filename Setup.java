@@ -1,4 +1,4 @@
-package zetaomicron;
+package wheeloffortune;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -132,7 +132,7 @@ public class Setup {
     
     //Sets title screen image
     public void setTitleImage() {
-        titleImage = new File("zetaomicron/Images/title.png");
+        titleImage = new File("wheeloffortune/Images/title.png");
 
         titleIconL = new JLabel();
         titleIconL.setSize(750, 350);
@@ -156,7 +156,7 @@ public class Setup {
     
     //Sets up the title image of the setup page
     public void setSetupImage() {
-        setupImage = new File("zetaomicron/Images/setup.png");
+        setupImage = new File("wheeloffortune/Images/setup.png");
 
         setupIconL = new JLabel();
         setupIconL.setSize(200, 55);
