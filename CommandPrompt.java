@@ -107,6 +107,7 @@ public class CommandPrompt {
                     Round.resetBank();
                     GameWindow.updateLetters(Round.getBank());
 
+                    // System.out.println(GameWindow.getRoundnum());
                     switch (GameWindow.getRoundnum()) {
                         case 0:
                             GameWindow.setRoundnum(1);
@@ -147,11 +148,12 @@ public class CommandPrompt {
                             } else {
                                 JOptionPane.showMessageDialog(winFrame, winner.getName() + " has won the game!", "Congradulations, " + winner.getName(), JOptionPane.INFORMATION_MESSAGE);
                             }
+                            commandFrame.setVisible(false);
+                            GameWindow.close();
+                            new Setup();
                             break;
                     }
-                    commandFrame.setVisible(false);
-                    GameWindow.close();
-                    new Setup();
+
                 } else {
                     commandFrame.setVisible(false);
                     try {

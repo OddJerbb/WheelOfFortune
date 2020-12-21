@@ -39,6 +39,7 @@ public class GameWindow {
         
         //Setting title panel
         titlePanel = new JPanel();
+        titleLabel = new JLabel();
         setTitleImage(1);
         titlePanel.add(titleLabel);
         titlePanel.setBackground(Color.white);
@@ -89,24 +90,23 @@ public class GameWindow {
     public static void setTitleImage(int roundNum) throws IOException {
         switch (roundNum) {
             case 1:
-                titleImageF = new File("zetaomicron/Images/title1.png");
+                titleImageF = new File("wheeloffortune/Images/title1.png");
                 break;
             case 2:
-                titleImageF = new File("zetaomicron/Images/title2.png");
+                titleImageF = new File("wheeloffortune/Images/title2.png");
                 break;
             default:
-                titleImageF = new File("zetaomicron/Images/title3.png");
+                titleImageF = new File("wheeloffortune/Images/title3.png");
                 break;
         }
         
-        titleLabel = new JLabel();
         titleLabel.setSize(550, 100);
         
         icon = ImageIO.read(titleImageF);
         image = icon.getScaledInstance(titleLabel.getWidth(), 
                 titleLabel.getHeight(), Image.SCALE_SMOOTH);
         titleIcon = new ImageIcon(image);
-        
+        titleIcon.getImage().flush();
         titleLabel.setIcon(titleIcon);
         titleLabel.setBackground(Color.WHITE);
     }
@@ -203,7 +203,7 @@ public class GameWindow {
     }
     
     public void setMarkImage() {
-        markImageF = new File("zetaomicron/Images/mark.png");
+        markImageF = new File("wheeloffortune/Images/mark.png");
         markLabel = new JLabel();
         markLabel.setSize(40, 30);
 
@@ -270,6 +270,14 @@ public class GameWindow {
     }
     
     public static void resetWheel() {
+        try {
+            icon = ImageIO.read(new File("wheeloffortune/Images/wheel.png"));
+            image = icon.getScaledInstance(wheelLabel.getWidth(), wheelLabel.getHeight(), Image.SCALE_SMOOTH);
+            wheelIcon = new ImageIcon(image);
+        } catch (IOException e) {
+            System.out.println("Nope");
+        }
+
         wheelIcon = new ImageIcon(image);
         wheelLabel.setIcon(wheelIcon);
     }

@@ -244,6 +244,10 @@ public class Round {
             default:
                 break;
         }
+
+        GameWindow.updatePlayer(0);
+        GameWindow.updatePlayer(1);
+        GameWindow.updatePlayer(2);
     }
 
     public static void resetBank() {
