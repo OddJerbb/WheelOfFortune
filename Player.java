@@ -1,51 +1,46 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package indproject;
+package wheeloffortune;
 
-/**
- *
- * @author S561561
- */
 public class Player {
-    private int num;
+    private int playerNum;
     private String name;
-    private int balance;
     private int roundBalance;
-
-    public Player(String n, int m) {
+    private int totalBalance;
+    
+    public Player(String n, int num) {
         name = n;
-        num = m;
-        balance = 0;
+        playerNum = num;
+        roundBalance = 0;
+        totalBalance = 0;
+    }
+    
+    public Player() {
+    }
+    
+    public void clearRoundBalance() {
         roundBalance = 0;
     }
     
-    public Player() {    
+    public void addRoundBalance(int amount) {
+        roundBalance += amount;
     }
     
-    public int getRoundBalance() {
-        return roundBalance;
-    }
-
-    public int getBalance() {
-        return balance;
-    }
-
-    public void addRoundBalance(int amount) {
-        roundBalance = roundBalance + amount;
-    }
-
     public void addBalance(int amount) {
-        balance = balance + amount;
+        totalBalance += amount;
     }
-
+    
     public String getName() {
         return name;
     }
     
     public int getNum() {
-        return num;
+        return playerNum;
+    }
+    
+    public int getRoundBalance() {
+        return roundBalance;
+    }
+    
+    public int getTotalBalance() {
+        return totalBalance;
     }
 }
