@@ -1,99 +1,69 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package indproject;
+package wheeloffortune;
 
-import java.awt.BorderLayout;
-import java.util.*;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
-/**
- *
- * @author S561561
- */
 public class GameWindow {
-
+    private static JFrame gameFrame = new JFrame("Wheel of Fortune");
+    
+    private JPanel titlePanel, middlePanel, leftPanel, puzzlePanel, 
+            playersPanel, wheelPanel, bankPanel;
+    private static JLabel player1L, player2L, player3L, puzzleL, 
+            category, bankL;
     private GridBagConstraints c;
-    private static ArrayList<Player> list = Start2.getList();
-
-    private static JLabel player1L;
-    private static JLabel player2L;
-    private static JLabel player3L;
-
-    private static JLabel puzzleL;
-    private static JLabel category;
-
-    private final static JFrame frame = new JFrame("Wheel of Fortune");
-
-    private JPanel titleP;
-    private static JLabel title;
-
-    private JPanel middleP;
-
-    private JPanel leftP;
-    private JPanel puzzleP;
-    private JPanel playersP;
-
-    private JPanel wheelP;
-
-    private static JLabel lettersL;
-    private JPanel lettersP;
-
-    private File markImage;
-    private JPanel iconP;
-    private JLabel iconL; //Label which holds the icon, itself
-    private BufferedImage icon; //Icon prior to being resized
-    private Image icon1; //Icon in the process of resizing
-    private ImageIcon icon2; //Resized icon
-
-    private File wheelImage;
-    private JPanel iconP2;
-    private static JLabel iconL2;
-    private BufferedImage icon3;
-    private static Image icon4;
-    private static ImageIcon icon5;
-
-    private static int counter;
+    
+    //Objects used to display images on frame
+    private static File titleImageF;
+    private File markImageF, wheelImageF;
+    private JPanel markIconP, wheelIconP;
+    private static JLabel titleLabel;
+    private JLabel markLabel;
+    private static JLabel wheelLabel;
+    private static BufferedImage icon;
+    private static Image image;
+    private static ImageIcon titleIcon;
+    private ImageIcon markIcon;
+    private static ImageIcon wheelIcon;
+    
+    private static int roundnum;
     private Thread t1;
-    private static Thread t2;
-    private static Thread t3;
-
-    public GameWindow(int x) throws IOException {
-        frame.setSize(900, 485);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        middleP = new JPanel(new GridLayout(1, 2));
-
-        setTitle(1);
+    private static Thread t2, t3;
+    
+    public GameWindow() throws IOException {
+        gameFrame.setSize(1200, 690);
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        //Setting title panel
+        titlePanel = new JPanel();
+        titleLabel = new JLabel();
+        setTitleImage(1);
+        titlePanel.add(titleLabel);
+        titlePanel.setBackground(Color.white);
+        
+        //Setting middle panel
+        middlePanel = new JPanel(new GridLayout(1, 2));
         setPlayers();
-
-        top();
-        left();
-        right();
-        bottom();
-
-        frame.add(titleP, BorderLayout.NORTH);
-        frame.add(middleP);
-        frame.add(lettersP, BorderLayout.SOUTH);
-
-        frame.setVisible(true);
-
-        int counter = 0;
+        setLeftPanel();
+        setRightPanel();
+        
+        //Setting bank panel
+        setBankPanel();
+        
+        gameFrame.add(titlePanel, BorderLayout.NORTH);
+        gameFrame.add(middlePanel);
+        gameFrame.add(bankPanel, BorderLayout.SOUTH);
+        gameFrame.setVisible(true);
+        
+        //Setting up threads, each of which initiates a new Round
         t1 = new Thread(new Runnable() {
             public void run() {
                 try {
                     new Round();
                 } catch (IOException ex) {
-                    Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
@@ -102,7 +72,6 @@ public class GameWindow {
                 try {
                     new Round();
                 } catch (IOException ex) {
-                    Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
@@ -111,219 +80,248 @@ public class GameWindow {
                 try {
                     new Round();
                 } catch (IOException ex) {
-                    Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
-
+        //Start the first Round
         t1.start();
     }
-
-    public void top() {
-        titleP = new JPanel();
-        titleP.add(title);
-        titleP.setBackground(Color.yellow);
-    }
-
-    public void left() {
-        c = new GridBagConstraints();
-
-        leftP = new JPanel(new GridLayout(2, 1));
-
-        puzzleP = new JPanel(new GridBagLayout());
-        puzzleP.setBackground(Color.green);
-        puzzleL = new JLabel();
-        category = new JLabel();
-        category.setFont(category.getFont().deriveFont(15.0F));
-
-        c.weightx = 1;
-        c.weighty = 1;
-        c.gridy = 0;
-        puzzleP.add(puzzleL, c);
-        c.gridy = 1;
-        puzzleP.add(category, c);
-
-        playersP = new JPanel(new GridBagLayout());
-        playersP.setBackground(Color.cyan);
-
-        c.gridy = 0;
-        playersP.add(player1L, c);
-        c.gridy = 1;
-        playersP.add(player2L, c);
-        c.gridy = 2;
-        playersP.add(player3L, c);
-
-        leftP.add(puzzleP);
-        leftP.add(playersP);
-        middleP.add(leftP);
-    }
-
-    public void right() {
-        wheelP = new JPanel(new GridBagLayout());
-        wheelP.setBackground(Color.magenta);
-
-        c.insets = new Insets(0, 0, 0, 0);
-        markImage();
-        wheelImage();
-
-        middleP.add(wheelP);
-    }
-
-    public void bottom() {
-        lettersL = new JLabel("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z");
-        lettersL.setFont(lettersL.getFont().deriveFont(20.0f));
-
-        lettersP = new JPanel();
-        lettersP.setBackground(Color.white);
-        lettersP.add(lettersL);
-    }
-
-    public static void setTitle(int x) {
-        if (x == 1) {
-            title = new JLabel("Round One");
-        } else if (x == 2) {
-            title.setText("Round Two");
-        } else {
-            title.setText("Final Round");
+    
+    public static void setTitleImage(int roundNum) throws IOException {
+        switch (roundNum) {
+            case 1:
+                titleImageF = new File("wheeloffortune/Images/title1.png");
+                break;
+            case 2:
+                titleImageF = new File("wheeloffortune/Images/title2.png");
+                break;
+            default:
+                titleImageF = new File("wheeloffortune/Images/title3.png");
+                break;
         }
-        title.setFont(title.getFont().deriveFont(30.0f));
+        
+        titleLabel.setSize(550, 100);
+        
+        icon = ImageIO.read(titleImageF);
+        image = icon.getScaledInstance(titleLabel.getWidth(), 
+                titleLabel.getHeight(), Image.SCALE_SMOOTH);
+        titleIcon = new ImageIcon(image);
+        titleIcon.getImage().flush();
+        titleLabel.setIcon(titleIcon);
+        titleLabel.setBackground(Color.WHITE);
     }
-
-    public static void setPuzzle() {
-        puzzleL.setText("<html>Puzzle:<br/>" + Round.getPuzzle() + "</html>");
-        puzzleL.setFont(puzzleL.getFont().deriveFont(25.0f));
-    }
-
+    
     public void setPlayers() {
-        player1L = new JLabel(list.get(0).getName() + ": $" + list.get(0).getRoundBalance() + " => $" + list.get(0).getBalance());
-        player2L = new JLabel(list.get(1).getName() + ": $" + list.get(1).getRoundBalance() + " => $" + list.get(1).getBalance());
-        player3L = new JLabel(list.get(2).getName() + ": $" + list.get(2).getRoundBalance() + " => $" + list.get(2).getBalance());
+        player1L = new JLabel(Setup.getPlayers().get(0).getName() + ": $" 
+                + Setup.getPlayers().get(0).getRoundBalance() + " => $" 
+                + Setup.getPlayers().get(0).getTotalBalance());
+        player2L = new JLabel(Setup.getPlayers().get(1).getName() + ": $" 
+                + Setup.getPlayers().get(1).getRoundBalance() + " => $" 
+                + Setup.getPlayers().get(1).getTotalBalance());
+        player3L = new JLabel(Setup.getPlayers().get(2).getName() + ": $" 
+                + Setup.getPlayers().get(2).getRoundBalance() + " => $" 
+                + Setup.getPlayers().get(2).getTotalBalance());
 
-        player1L.setFont(player1L.getFont().deriveFont(20.0f));
-        player2L.setFont(player2L.getFont().deriveFont(20.0f));
-        player3L.setFont(player3L.getFont().deriveFont(20.0f));
+        player1L.setFont(player1L.getFont().deriveFont(30.0f));
+        player2L.setFont(player2L.getFont().deriveFont(30.0f));
+        player3L.setFont(player3L.getFont().deriveFont(30.0f));
     }
-
+    
     public static void updatePlayer(int x) {
         switch (x) {
             case 0:
-                player1L.setText(list.get(0).getName() + ": $" + list.get(0).getRoundBalance() + " => $" + list.get(0).getBalance());
+                player1L.setText(Setup.getPlayers().get(0).getName() + ": $" + 
+                        Setup.getPlayers().get(0).getRoundBalance() + " => $" + 
+                        Setup.getPlayers().get(0).getTotalBalance());
                 break;
             case 1:
-                player2L.setText(list.get(1).getName() + ": $" + list.get(1).getRoundBalance() + " => $" + list.get(1).getBalance());
+                player2L.setText(Setup.getPlayers().get(1).getName() + ": $" + 
+                        Setup.getPlayers().get(1).getRoundBalance() + " => $" + 
+                        Setup.getPlayers().get(1).getTotalBalance());
                 break;
             case 2:
-                player3L.setText(list.get(2).getName() + ": $" + list.get(2).getRoundBalance() + " => $" + list.get(2).getBalance());
+                player3L.setText(Setup.getPlayers().get(2).getName() + ": $" + 
+                        Setup.getPlayers().get(2).getRoundBalance() + " => $" + 
+                        Setup.getPlayers().get(2).getTotalBalance());
                 break;
             default:
                 break;
         }
-        frame.revalidate();
     }
-
+    
     public static void updateLetters(String[] bank) {
         String b = "";
         for (int x = 0; x < bank.length; x++) {
             b = b.concat(bank[x].toUpperCase() + " ");
         }
-        lettersL.setText(b);
+        bankL.setText(b);
     }
-
-    public void markImage() {
-        markImage = new File("indproject/Images/mark.png");
-        iconL = new JLabel();
-        iconL.setSize(25, 20);
+    
+    public void setLeftPanel() {
+        leftPanel = new JPanel(new GridLayout(2, 1));
+        c = new GridBagConstraints();
+        
+        //Setting up the panel displaying the puzzle
+        puzzlePanel = new JPanel(new GridBagLayout());
+        puzzlePanel.setBackground(Color.green);
+        puzzleL = new JLabel();
+        category = new JLabel();
+        category.setFont(category.getFont().deriveFont(25.0F));
+        
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridy = 0;
+        puzzlePanel.add(puzzleL, c);
+        c.gridy = 1;
+        puzzlePanel.add(category, c);
+        
+        //Setting up the panel displaying player information
+        playersPanel = new JPanel(new GridBagLayout());
+        playersPanel.setBackground(Color.cyan);
+        
+        c.gridy = 0;
+        playersPanel.add(player1L, c);
+        c.gridy = 1;
+        playersPanel.add(player2L, c);
+        c.gridy = 2;
+        playersPanel.add(player3L, c);
+        
+        leftPanel.add(puzzlePanel);
+        leftPanel.add(playersPanel);
+        middlePanel.add(leftPanel);
+    }
+    
+    public void setRightPanel() {
+        wheelPanel = new JPanel(new GridBagLayout());
+        wheelPanel.setBackground(Color.magenta);
+        
+        c.insets = new Insets(0, 0, 0, 0);
+        setMarkImage();
+        setWheelImage();
+        
+        middlePanel.add(wheelPanel);
+    }
+    
+    public void setMarkImage() {
+        markImageF = new File("wheeloffortune/Images/mark.png");
+        markLabel = new JLabel();
+        markLabel.setSize(40, 30);
 
         try {
-            icon = ImageIO.read(markImage);
-            icon1 = icon.getScaledInstance(iconL.getWidth(), iconL.getHeight(), Image.SCALE_SMOOTH);
-            icon2 = new ImageIcon(icon1);
+            icon = ImageIO.read(markImageF);
+            image = icon.getScaledInstance(markLabel.getWidth(), markLabel.getHeight(), Image.SCALE_SMOOTH);
+            markIcon = new ImageIcon(image);
         } catch (IOException e) {
             System.out.println("Nope");
         }
 
-        iconL.setIcon(icon2);
+        markLabel.setIcon(markIcon);
 
-        iconP = new JPanel();
-        iconP.add(iconL);
-        iconP.setBackground(Color.magenta);
+        markIconP = new JPanel();
+        markIconP.add(markLabel);
+        markIconP.setBackground(Color.magenta);
 
         c.gridy = 0;
-        wheelP.add(iconP, c);
+        wheelPanel.add(markIconP, c);
     }
-
-    public void wheelImage() {
-        wheelImage = new File("indproject/images/wheel.png");
-        iconL2 = new JLabel();
-        iconL2.setSize(325, 325);
+    
+    public void setWheelImage() {
+        wheelImageF = new File("wheeloffortune/Images/wheel.png");
+        wheelLabel = new JLabel();
+        wheelLabel.setSize(425, 425);
 
         try {
-            icon3 = ImageIO.read(wheelImage);
-            icon4 = icon3.getScaledInstance(iconL2.getWidth(), iconL2.getHeight(), Image.SCALE_SMOOTH);
-            icon5 = new ImageIcon(icon4);
+            icon = ImageIO.read(wheelImageF);
+            image = icon.getScaledInstance(wheelLabel.getWidth(), wheelLabel.getHeight(), Image.SCALE_SMOOTH);
+            wheelIcon = new ImageIcon(image);
         } catch (IOException e) {
             System.out.println("Nope");
         }
 
-        iconL2.setIcon(icon5);
-        iconL2.setBackground(Color.magenta);
+        wheelLabel.setIcon(wheelIcon);
+        wheelLabel.setBackground(Color.magenta);
 
-        iconP2 = new JPanel();
-        iconP2.add(iconL2);
-        iconP2.setBackground(Color.magenta);
+        wheelIconP = new JPanel();
+        wheelIconP.add(wheelLabel);
+        wheelIconP.setBackground(Color.magenta);
 
         c.gridy = 1;
-        wheelP.add(iconP2, c);
+        wheelPanel.add(wheelIconP, c);
     }
-
+    
     public static void spinWheel(int angle) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
         GraphicsConfiguration gc = gd.getDefaultConfiguration();
 
-        BufferedImage image = gc.createCompatibleImage(icon5.getIconHeight(), icon5.getIconWidth(), Transparency.TRANSLUCENT);
+        BufferedImage image = gc.createCompatibleImage(wheelIcon.getIconHeight(), wheelIcon.getIconWidth(), Transparency.TRANSLUCENT);
         Graphics2D g2d = image.createGraphics();
         
-        double x = (icon5.getIconHeight()-icon5.getIconWidth())/2.0;
-        double y = (icon5.getIconWidth()-icon5.getIconHeight())/2.0;
+        double x = (wheelIcon.getIconHeight()-wheelIcon.getIconWidth())/2.0;
+        double y = (wheelIcon.getIconWidth()-wheelIcon.getIconHeight())/2.0;
         
         AffineTransform at = AffineTransform.getTranslateInstance(x,y);
-        at.rotate(Math.toRadians(angle), icon5.getIconWidth() / 2, icon5.getIconHeight() / 2);
-        g2d.drawImage(icon5.getImage(),at, null);
+        at.rotate(Math.toRadians(angle), wheelIcon.getIconWidth() / 2, wheelIcon.getIconHeight() / 2);
+        g2d.drawImage(wheelIcon.getImage(),at, null);
         g2d.dispose();
         
-        icon5 = new ImageIcon(image);
-        iconL2.setIcon(icon5);
+        wheelIcon = new ImageIcon(image);
+        wheelLabel.setIcon(wheelIcon);
     }
     
     public static void resetWheel() {
-        icon5 = new ImageIcon(icon4);
-        iconL2.setIcon(icon5);
+        try {
+            icon = ImageIO.read(new File("wheeloffortune/Images/wheel.png"));
+            image = icon.getScaledInstance(wheelLabel.getWidth(), wheelLabel.getHeight(), Image.SCALE_SMOOTH);
+            wheelIcon = new ImageIcon(image);
+        } catch (IOException e) {
+            System.out.println("Nope");
+        }
+
+        wheelIcon = new ImageIcon(image);
+        wheelLabel.setIcon(wheelIcon);
     }
     
-    public static void start1() {
-        setTitle(2);
-        t2.start();
-    }
+    public void setBankPanel() {
+        bankL = new JLabel("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z");
+        bankL.setFont(bankL.getFont().deriveFont(30.0f));
 
-    public static void start2() {
-        setTitle(3);
-        t3.start();
+        bankPanel = new JPanel();
+        bankPanel.setBackground(Color.white);
+        bankPanel.add(bankL);
     }
-
-    public static void setCounter(int c) {
-        counter = c;
-    }
-
-    public static int getCounter() {
-        return counter;
-    }
-
-    public static void close() {
-        frame.setVisible(false);
-    }
-
+    
     public static void setCategory(String cat) {
         category.setText(cat);
     }
-}
+    
+    public static void setPuzzle() {
+        puzzleL.setText("<html>Puzzle:<br/>" + Round.getPuzzle() + "</html>");
+        puzzleL.setFont(puzzleL.getFont().deriveFont(33.0f));
+    }
+    
+    public static void setRoundnum(int n) {
+        roundnum = n;
+    }
+    
+    public static int getRoundnum() {
+        return roundnum;
+    }
+    
+    public static void start(int n) throws IOException {
+        switch(n) {
+            case 0:
+                setTitleImage(2);
+                t2.start();
+                break;
+            case 1:
+                setTitleImage(3);
+                t3.start();
+                break;
+        }
+    }
+    
+    public static void close() {
+        gameFrame.setVisible(false);
+    }
+} 
